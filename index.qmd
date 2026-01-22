@@ -1,6 +1,6 @@
 ---
 title: "Omics and Bioinformatics Workshop Series"
-author: "Dr Sean Tattan, UEA"
+author: "Dr Sean Tattan, School of Chemistry, Pharmacy and Pharmacology https://research-portal.uea.ac.uk/en/persons/sean-tattan/"
 format:
   html:
     toc: true
@@ -145,7 +145,7 @@ gene_data %>%
   ggplot(aes(x=Condition, y = Expression))
 ```
 
-Now lets add another and overlay a boxplot onto the plot
+Now lets add another layer and overlay a boxplot onto the plot
 
 ```{r}
 #Create the base layer
@@ -283,7 +283,7 @@ EnhancedVolcano(
 
 ## Challenge Task
 
-Can you use your `ggplot2` skills to create a custom visualization of the dataset?
+Can you use your `ggplot2` skills to create a custom visualisation of the dataset?
 
 ## Identify Upregulated Genes
 
@@ -311,13 +311,13 @@ write.table(
 
 # Workshop 3: Gene Ontology Analysis Using Stringdb (browser)
 
-In the last workshop activity, we ran a differential gene expression analysis using `DEseq2` and extracted a `.txt` file which contained a list of genes that are signficantly upregulated (log2 FC >=1 and padj < 0.05) in the NTCU-Induced squamous cell carcinoma samples.
+In the previous workshop, we performed a differential gene expression analysis with `DESeq2` and extracted a `.txt` file containing genes that were significantly upregulated in NTCU-induced squamous cell carcinoma samples (log2 fold change ≥ 1, adjusted p-value < 0.05).
 
-In this workshop, we will use `StringDB` in the browser to perform a gene ontology (GO) analysis. GO analysis helps us identify which biological processes and molecular functions are enriched among the upregulated genes.
+In this workshop, we will use `StringDB` to perform a Gene Ontology (GO) analysis. GO analysis allows us to determine which biological processes, molecular functions, and cellular components are enriched among the upregulated genes, providing insights into the functional impact of these genes in cancer progression.
 
 ## Navigate to Stringdb 
 
-Firstly navigate to the `Stringdb` website https://string-db.org/. Then select the `Browse` button as higlighted in the text below
+Firstly navigate to the `Stringdb` website https://string-db.org/. Then select`Browse` to begin a gene set analysis. 
 
 ```{r echo = FALSE}
 library(magick)
@@ -343,3 +343,21 @@ screenshot_3 <- image_read("images/screenshot_3.png")
 screenshot_3
 
 ```
+
+Press `CONTINUE` until you can see the results of the gene set analysis
+
+```{r echo = FALSE}
+screenshot_4 <- image_read("images/screenshot_4.png")
+screenshot_4
+
+```
+
+Scroll down to view the graphical representations of enriched biological processes.
+
+Examine the most significantly enriched terms and consider:
+
+1) Which biological pathways are upregulated in squamous cell carcinoma?
+
+2) How do these pathways relate to the disease biology?
+
+3) Formulate a hypothesis about why these processes might be important in tumour progression.

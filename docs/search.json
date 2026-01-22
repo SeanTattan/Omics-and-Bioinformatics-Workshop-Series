@@ -1,0 +1,121 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "",
+    "text": "Use R to compute simple addition, subtraction, multiplication, and division\n\n5*7\n\n[1] 35\n\n49/7\n\n[1] 7\n\n88+9\n\n[1] 97\n\n5-9\n\n[1] -4\n\n\n\n\n\nNow that we know how to compute with numbers, we can store results in variables for later use\n\n#Directly assigning variables\nx&lt;-10\nprint(x)\n\n[1] 10\n\n#Assign a variable to be the result of a mathematical calculation\ny&lt;-5^2\nprint(y)\n\n[1] 25\n\n#Assign a variable to be the result of two other variables interacting\nz&lt;-x*y\nprint(z)\n\n[1] 250\n\n\nChallenge- can you use this knowledge to use R to calculate the volume of a spherical cell where the radius, r is 5 µm. The equation is (4/3) * pi * r^3.\n\n\n\nUp to now, we have stored individual values in variables. Vectors allow us to group multiple values in a single object, enabling fast and efficient calculations across whole sets of data\nVectors are sequences of data points of the same type. In R, you create a vector using the c() function, which combines values into one object\nCreate a numeric vector\n\nvec_num&lt;-c(2,4,6,8,10)\nprint(vec_num)\n\n[1]  2  4  6  8 10\n\n\nCreate a character vector\n\nvec_chr&lt;-c(\"A\",\"B\",\"C\",\"D\",\"E\")\nstr(vec_chr)\n\n chr [1:5] \"A\" \"B\" \"C\" \"D\" \"E\"\n\n\nMathematically manipulate a numerical vector\n\nvec_num2&lt;-vec_num*4\nprint(vec_num2)\n\n[1]  8 16 24 32 40\n\n\nCreate a new vector by adding two existing vectors\n\nvec_num3&lt;-vec_num+vec_num2\nprint(vec_num3)\n\n[1] 10 20 30 40 50\n\n\nChallenge: Suppose these numbers represent the colony forming units in four different petri dishes c(69,74,50,80). Create a second vector representing a 50% increase in CFUs.\n\n\n\nVectors let us store many values of the same type. To organise multiple numeric values in rows and columns, we can use matrices.\nCombine vectors to create a data matrix using cbind (combine columns) function\n\nmatrix_num&lt;-cbind(vec_num,vec_num2,vec_num3)\nprint(matrix_num)\n\n     vec_num vec_num2 vec_num3\n[1,]       2        8       10\n[2,]       4       16       20\n[3,]       6       24       30\n[4,]       8       32       40\n[5,]      10       40       50\n\n\nMatrices can only contain one data class, if we were to add a column filled with character data, the whole matrix would convert to a character type\n\nmatrix_chr&lt;-cbind(matrix_num,vec_chr)\nprint(matrix_chr)\n\n     vec_num vec_num2 vec_num3 vec_chr\n[1,] \"2\"     \"8\"      \"10\"     \"A\"    \n[2,] \"4\"     \"16\"     \"20\"     \"B\"    \n[3,] \"6\"     \"24\"     \"30\"     \"C\"    \n[4,] \"8\"     \"32\"     \"40\"     \"D\"    \n[5,] \"10\"    \"40\"     \"50\"     \"E\"    \n\n\nThis can be overcome by creating a data frame which allows the storing of multiple data types\n\n#Convert the data matrix to a data frame\nexample_frame&lt;-as.data.frame(matrix_num)\n# the $ operator allows columns in data frames to be called, modified, and assigned\nexample_frame$chr_data&lt;-vec_chr\n#inspect the data frame\nprint(example_frame)\n\n  vec_num vec_num2 vec_num3 chr_data\n1       2        8       10        A\n2       4       16       20        B\n3       6       24       30        C\n4       8       32       40        D\n5      10       40       50        E\n\n\nWe can also create data frames from scratch. Here, we make some dummy data representing the expression of geneA in patient-derived tumour tissue compared to healthy tissue for 6 patients.\n\n# Create dummy gene expression data\ngene_data &lt;- data.frame(\n  Sample = paste0(\"Sample\", 1:12),\n  Condition = rep(c(\"Healthy\", \"Tumour\"), each = 6),\n  Expression = c(\n    70, 67, 70, 50, 60, 80,    # Healthy\n    110, 115, 125, 112, 118, 109 # Tumour\n  )\n)\n\n# Inspect the data\ngene_data\n\n     Sample Condition Expression\n1   Sample1   Healthy         70\n2   Sample2   Healthy         67\n3   Sample3   Healthy         70\n4   Sample4   Healthy         50\n5   Sample5   Healthy         60\n6   Sample6   Healthy         80\n7   Sample7    Tumour        110\n8   Sample8    Tumour        115\n9   Sample9    Tumour        125\n10 Sample10    Tumour        112\n11 Sample11    Tumour        118\n12 Sample12    Tumour        109\n\nstr(gene_data)\n\n'data.frame':   12 obs. of  3 variables:\n $ Sample    : chr  \"Sample1\" \"Sample2\" \"Sample3\" \"Sample4\" ...\n $ Condition : chr  \"Healthy\" \"Healthy\" \"Healthy\" \"Healthy\" ...\n $ Expression: num  70 67 70 50 60 80 110 115 125 112 ...\n\n\n\n\n\nNow we have learnt how to create variables, vectors, matrices, and data frames, it is next pertient to be able to visualise that data. We will use a package called ggplot2 to achieve this. We will use our dummy gene expression data as an example.\nPlots made in ggplot2 are built in layers. In the base layer we may define the axes of the plot.\nThis is achieved below, in this example we use a pipe %&gt;%. The pipe takes the data on its left and sends it straight into the function on its right.\n\n#Load the package that contains the ggplot2 package and functions\nlibrary(tidyverse)\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))\n\n\n\n\n\n\n\n\nNow lets add another layer and overlay a boxplot onto the plot\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()\n\n\n\n\n\n\n\n\nNow overlay the data points. We are going the “jitter” them in the x axis so they are easier to visualise\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()+\n  geom_jitter(width=0.2) # width informs how far points are able to jitter\n\n\n\n\n\n\n\n\nWe could improve the theme of the plot. Firstly we could use a preset theme. It would also be good to change the axis titles to something more appropiate\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()+\n  geom_jitter(width=0.2)+ # width informs how far points are able to jitter\n  theme_bw()+ #pre made theme\n  labs(x=\"Condition\",y=\"Expression of Gene A (TPM)\")\n\n\n\n\n\n\n\n\nMake further custom edits to the theme to remove grid lines, increase font size, and change font colour to black.\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()+\n  geom_jitter(width=0.2)+ # width informs how far points are able to jitter\n  theme_bw()+ #pre made theme\n  theme(panel.grid.major = element_blank(),\n        panel.grid.minor = element_blank(),\n        axis.title = element_text(size=14, face=\"bold\", colour=\"black\"),\n        axis.text=element_text(size=12, colour=\"black\"))+\n  labs(x=\"Condition\",y=\"Expression of Gene A (TPM)\")"
+  },
+  {
+    "objectID": "index.html#perform-simple-mathematical-calculations",
+    "href": "index.html#perform-simple-mathematical-calculations",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "",
+    "text": "Use R to compute simple addition, subtraction, multiplication, and division\n\n5*7\n\n[1] 35\n\n49/7\n\n[1] 7\n\n88+9\n\n[1] 97\n\n5-9\n\n[1] -4"
+  },
+  {
+    "objectID": "index.html#create-variables",
+    "href": "index.html#create-variables",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "",
+    "text": "Now that we know how to compute with numbers, we can store results in variables for later use\n\n#Directly assigning variables\nx&lt;-10\nprint(x)\n\n[1] 10\n\n#Assign a variable to be the result of a mathematical calculation\ny&lt;-5^2\nprint(y)\n\n[1] 25\n\n#Assign a variable to be the result of two other variables interacting\nz&lt;-x*y\nprint(z)\n\n[1] 250\n\n\nChallenge- can you use this knowledge to use R to calculate the volume of a spherical cell where the radius, r is 5 µm. The equation is (4/3) * pi * r^3."
+  },
+  {
+    "objectID": "index.html#creating-vectors",
+    "href": "index.html#creating-vectors",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "",
+    "text": "Up to now, we have stored individual values in variables. Vectors allow us to group multiple values in a single object, enabling fast and efficient calculations across whole sets of data\nVectors are sequences of data points of the same type. In R, you create a vector using the c() function, which combines values into one object\nCreate a numeric vector\n\nvec_num&lt;-c(2,4,6,8,10)\nprint(vec_num)\n\n[1]  2  4  6  8 10\n\n\nCreate a character vector\n\nvec_chr&lt;-c(\"A\",\"B\",\"C\",\"D\",\"E\")\nstr(vec_chr)\n\n chr [1:5] \"A\" \"B\" \"C\" \"D\" \"E\"\n\n\nMathematically manipulate a numerical vector\n\nvec_num2&lt;-vec_num*4\nprint(vec_num2)\n\n[1]  8 16 24 32 40\n\n\nCreate a new vector by adding two existing vectors\n\nvec_num3&lt;-vec_num+vec_num2\nprint(vec_num3)\n\n[1] 10 20 30 40 50\n\n\nChallenge: Suppose these numbers represent the colony forming units in four different petri dishes c(69,74,50,80). Create a second vector representing a 50% increase in CFUs."
+  },
+  {
+    "objectID": "index.html#creating-matrices-and-data-frames",
+    "href": "index.html#creating-matrices-and-data-frames",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "",
+    "text": "Vectors let us store many values of the same type. To organise multiple numeric values in rows and columns, we can use matrices.\nCombine vectors to create a data matrix using cbind (combine columns) function\n\nmatrix_num&lt;-cbind(vec_num,vec_num2,vec_num3)\nprint(matrix_num)\n\n     vec_num vec_num2 vec_num3\n[1,]       2        8       10\n[2,]       4       16       20\n[3,]       6       24       30\n[4,]       8       32       40\n[5,]      10       40       50\n\n\nMatrices can only contain one data class, if we were to add a column filled with character data, the whole matrix would convert to a character type\n\nmatrix_chr&lt;-cbind(matrix_num,vec_chr)\nprint(matrix_chr)\n\n     vec_num vec_num2 vec_num3 vec_chr\n[1,] \"2\"     \"8\"      \"10\"     \"A\"    \n[2,] \"4\"     \"16\"     \"20\"     \"B\"    \n[3,] \"6\"     \"24\"     \"30\"     \"C\"    \n[4,] \"8\"     \"32\"     \"40\"     \"D\"    \n[5,] \"10\"    \"40\"     \"50\"     \"E\"    \n\n\nThis can be overcome by creating a data frame which allows the storing of multiple data types\n\n#Convert the data matrix to a data frame\nexample_frame&lt;-as.data.frame(matrix_num)\n# the $ operator allows columns in data frames to be called, modified, and assigned\nexample_frame$chr_data&lt;-vec_chr\n#inspect the data frame\nprint(example_frame)\n\n  vec_num vec_num2 vec_num3 chr_data\n1       2        8       10        A\n2       4       16       20        B\n3       6       24       30        C\n4       8       32       40        D\n5      10       40       50        E\n\n\nWe can also create data frames from scratch. Here, we make some dummy data representing the expression of geneA in patient-derived tumour tissue compared to healthy tissue for 6 patients.\n\n# Create dummy gene expression data\ngene_data &lt;- data.frame(\n  Sample = paste0(\"Sample\", 1:12),\n  Condition = rep(c(\"Healthy\", \"Tumour\"), each = 6),\n  Expression = c(\n    70, 67, 70, 50, 60, 80,    # Healthy\n    110, 115, 125, 112, 118, 109 # Tumour\n  )\n)\n\n# Inspect the data\ngene_data\n\n     Sample Condition Expression\n1   Sample1   Healthy         70\n2   Sample2   Healthy         67\n3   Sample3   Healthy         70\n4   Sample4   Healthy         50\n5   Sample5   Healthy         60\n6   Sample6   Healthy         80\n7   Sample7    Tumour        110\n8   Sample8    Tumour        115\n9   Sample9    Tumour        125\n10 Sample10    Tumour        112\n11 Sample11    Tumour        118\n12 Sample12    Tumour        109\n\nstr(gene_data)\n\n'data.frame':   12 obs. of  3 variables:\n $ Sample    : chr  \"Sample1\" \"Sample2\" \"Sample3\" \"Sample4\" ...\n $ Condition : chr  \"Healthy\" \"Healthy\" \"Healthy\" \"Healthy\" ...\n $ Expression: num  70 67 70 50 60 80 110 115 125 112 ..."
+  },
+  {
+    "objectID": "index.html#data-visualisation",
+    "href": "index.html#data-visualisation",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "",
+    "text": "Now we have learnt how to create variables, vectors, matrices, and data frames, it is next pertient to be able to visualise that data. We will use a package called ggplot2 to achieve this. We will use our dummy gene expression data as an example.\nPlots made in ggplot2 are built in layers. In the base layer we may define the axes of the plot.\nThis is achieved below, in this example we use a pipe %&gt;%. The pipe takes the data on its left and sends it straight into the function on its right.\n\n#Load the package that contains the ggplot2 package and functions\nlibrary(tidyverse)\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))\n\n\n\n\n\n\n\n\nNow lets add another layer and overlay a boxplot onto the plot\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()\n\n\n\n\n\n\n\n\nNow overlay the data points. We are going the “jitter” them in the x axis so they are easier to visualise\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()+\n  geom_jitter(width=0.2) # width informs how far points are able to jitter\n\n\n\n\n\n\n\n\nWe could improve the theme of the plot. Firstly we could use a preset theme. It would also be good to change the axis titles to something more appropiate\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()+\n  geom_jitter(width=0.2)+ # width informs how far points are able to jitter\n  theme_bw()+ #pre made theme\n  labs(x=\"Condition\",y=\"Expression of Gene A (TPM)\")\n\n\n\n\n\n\n\n\nMake further custom edits to the theme to remove grid lines, increase font size, and change font colour to black.\n\n#Create the base layer\n\ngene_data %&gt;% \n  ggplot(aes(x=Condition, y = Expression))+\n  geom_boxplot()+\n  geom_jitter(width=0.2)+ # width informs how far points are able to jitter\n  theme_bw()+ #pre made theme\n  theme(panel.grid.major = element_blank(),\n        panel.grid.minor = element_blank(),\n        axis.title = element_text(size=14, face=\"bold\", colour=\"black\"),\n        axis.text=element_text(size=12, colour=\"black\"))+\n  labs(x=\"Condition\",y=\"Expression of Gene A (TPM)\")"
+  },
+  {
+    "objectID": "index.html#load-required-packages",
+    "href": "index.html#load-required-packages",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Load Required Packages",
+    "text": "Load Required Packages\n\nlibrary(DESeq2)\nlibrary(EnhancedVolcano)\nlibrary(tidyverse)"
+  },
+  {
+    "objectID": "index.html#import-data",
+    "href": "index.html#import-data",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Import Data",
+    "text": "Import Data\n\ncount_data &lt;- read.table(\n  file = \"data/GSE129482_laura_0417.counts.txt\",\n  row.names = 1,\n  header = TRUE\n)\n\nmeta_data &lt;- read.csv(\"data/RNAseq_GSE129482_metadata.csv\")\n\nhead(count_data)\n\n              A01 A03 A06 A07 A08 D36_SCC D39_SCC D42_SCC D44_SCC E57_SCC\nPlekhg2       125  64 255  94  35      44     148     112      61      43\nPlekhg3        93  27 224 165  82     223     346     118      61     292\nPlekhg1       133  98 219 186  68     126     304      93      62     180\nPlekhg6         2   4   5   0   0      17     184      82      51     120\n4930592I03Rik   0   0   4  20   1       6       1      21      12       1\nPlekhg4         0   0   2   1   0       8      19      27      21       3\n\nhead(meta_data)\n\n   Sample Condition\n1     A01    Normal\n2     A03    Normal\n3     A06    Normal\n4     A07    Normal\n5     A08    Normal\n6 D36_SCC  NTCU_SCC"
+  },
+  {
+    "objectID": "index.html#data-preparation-and-quality-checks",
+    "href": "index.html#data-preparation-and-quality-checks",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Data Preparation and Quality Checks",
+    "text": "Data Preparation and Quality Checks\n\ncount_data &lt;- as.matrix(count_data)\nmeta_data  &lt;- as.matrix(meta_data)\n\nif (any(duplicated(row.names(count_data)))) {\n  print(\"Duplicates Present\")\n} else {\n  print(\"No Duplicates Present\")\n}\n\n[1] \"No Duplicates Present\"\n\nnrow(meta_data) == ncol(count_data)\n\n[1] TRUE"
+  },
+  {
+    "objectID": "index.html#create-deseq2-dataset",
+    "href": "index.html#create-deseq2-dataset",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Create DESeq2 Dataset",
+    "text": "Create DESeq2 Dataset\n\ndds &lt;- DESeqDataSetFromMatrix(\n  countData = count_data,\n  colData   = meta_data,\n  design    = ~ Condition\n)"
+  },
+  {
+    "objectID": "index.html#run-deseq2-analysis",
+    "href": "index.html#run-deseq2-analysis",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Run DESeq2 Analysis",
+    "text": "Run DESeq2 Analysis\n\ndds &lt;- DESeq(dds)\nres &lt;- results(dds)"
+  },
+  {
+    "objectID": "index.html#process-results",
+    "href": "index.html#process-results",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Process Results",
+    "text": "Process Results\n\nres &lt;- res[order(res$padj), ]\nres &lt;- as.data.frame(res)\nres &lt;- res[!(res$baseMean == 0), ]\nres &lt;- res[!is.na(res$padj), ]\nres &lt;- rownames_to_column(res, var = \"gene\")"
+  },
+  {
+    "objectID": "index.html#volcano-plot",
+    "href": "index.html#volcano-plot",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Volcano Plot",
+    "text": "Volcano Plot\n\nEnhancedVolcano(\n  res,\n  lab = res$gene,\n  x = \"log2FoldChange\",\n  y = \"padj\",\n  gridlines.major = FALSE,\n  gridlines.minor = FALSE,\n  border = \"full\",\n  title = \"Normal Lung vs NTCU-Induced SCC\"\n)"
+  },
+  {
+    "objectID": "index.html#challenge-task",
+    "href": "index.html#challenge-task",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Challenge Task",
+    "text": "Challenge Task\nCan you use your ggplot2 skills to create a custom visualisation of the dataset?"
+  },
+  {
+    "objectID": "index.html#identify-upregulated-genes",
+    "href": "index.html#identify-upregulated-genes",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Identify Upregulated Genes",
+    "text": "Identify Upregulated Genes\n\nsig_up &lt;- res %&gt;%\n  filter(\n    padj &lt; 0.05,\n    log2FoldChange &gt;= 1\n  )\n\nupregulated_genes &lt;- sig_up$gene"
+  },
+  {
+    "objectID": "index.html#export-upregulated-gene-list",
+    "href": "index.html#export-upregulated-gene-list",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Export Upregulated Gene List",
+    "text": "Export Upregulated Gene List\n\nwrite.table(\n  upregulated_genes,\n  file = \"data/upregulated_genes.txt\",\n  quote = FALSE,\n  row.names = FALSE,\n  col.names = FALSE\n)"
+  },
+  {
+    "objectID": "index.html#navigate-to-stringdb",
+    "href": "index.html#navigate-to-stringdb",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Navigate to Stringdb",
+    "text": "Navigate to Stringdb\nFirstly navigate to the Stringdb website https://string-db.org/. Then selectBrowse to begin a gene set analysis.\n\n\n\n\n\n\n\n\n\n##Upload the upregulated genes text file\nNow upload the upregulated_genes.txt file and press SEARCH. Then select CONTINUE TO ANALYSIS\n\n\n\n\n\n\n\n\n\nSelect Mus Musculus as the organism\n\n\n\n\n\n\n\n\n\nPress CONTINUE until you can see the results of the gene set analysis\n\n\n\n\n\n\n\n\n\nScroll down to view the graphical representations of enriched biological processes.\nExamine the most significantly enriched terms and consider:\n\nWhich biological pathways are upregulated in squamous cell carcinoma?\nHow do these pathways relate to the disease biology?\nFormulate a hypothesis about why these processes might be important in tumour progression."
+  }
+]
