@@ -1,0 +1,345 @@
+---
+title: "Omics and Bioinformatics Workshop Series"
+author: "Dr Sean Tattan, UEA"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+# Workshop 1: General Introduction to R {.tabset}
+
+## Perform simple mathematical calculations
+
+Use R to compute simple addition, subtraction, multiplication, and division
+
+```{r}
+5*7
+
+49/7
+
+88+9
+
+5-9
+```
+
+## Create Variables
+
+Now that we know how to compute with numbers, we can store results in variables for later use
+
+```{r}
+#Directly assigning variables
+x<-10
+print(x)
+#Assign a variable to be the result of a mathematical calculation
+y<-5^2
+print(y)
+#Assign a variable to be the result of two other variables interacting
+z<-x*y
+print(z)
+```
+
+Challenge- can you use this knowledge to use R to calculate the volume of a spherical cell where the radius, `r` is 5 µm. The equation is `(4/3) * pi * r^3`. 
+
+## Creating Vectors
+
+Up to now, we have stored individual values in variables. Vectors allow us to group multiple values in a single object, enabling fast and efficient calculations across whole sets of data
+
+Vectors are sequences of data points of the same type. In R, you create a vector using the `c()` function, which combines values into one object
+
+Create a numeric vector
+
+```{r}
+vec_num<-c(2,4,6,8,10)
+print(vec_num)
+```
+
+Create a character vector
+
+```{r}
+vec_chr<-c("A","B","C","D","E")
+str(vec_chr)
+```
+
+Mathematically manipulate a numerical vector
+
+```{r}
+vec_num2<-vec_num*4
+print(vec_num2)
+```
+
+Create a new vector by  adding two existing vectors
+
+```{r}
+vec_num3<-vec_num+vec_num2
+print(vec_num3)
+```
+
+Challenge: Suppose these numbers represent the colony forming units in four different petri dishes `c(69,74,50,80)`. Create a second vector representing a 50% increase in CFUs.
+
+## Creating Matrices and Data Frames
+
+Vectors let us store many values of the same type. To organise multiple numeric values in rows and columns, we can use matrices.
+
+Combine vectors to create a data matrix using `cbind` (combine columns) function
+
+```{r}
+matrix_num<-cbind(vec_num,vec_num2,vec_num3)
+print(matrix_num)
+```
+
+Matrices can only contain one data class, if we were to add a column filled with character data, the whole matrix would convert to a character type
+
+```{r}
+matrix_chr<-cbind(matrix_num,vec_chr)
+print(matrix_chr)
+```
+
+This can be overcome by creating a data frame which allows the storing of multiple data types
+
+```{r}
+#Convert the data matrix to a data frame
+example_frame<-as.data.frame(matrix_num)
+# the $ operator allows columns in data frames to be called, modified, and assigned
+example_frame$chr_data<-vec_chr
+#inspect the data frame
+print(example_frame)
+```
+
+We can also create data frames from scratch. Here, we make some dummy data representing the expression of `geneA` in patient-derived tumour tissue compared to healthy tissue for 6 patients.
+
+```{r}
+# Create dummy gene expression data
+gene_data <- data.frame(
+  Sample = paste0("Sample", 1:12),
+  Condition = rep(c("Healthy", "Tumour"), each = 6),
+  Expression = c(
+    70, 67, 70, 50, 60, 80,    # Healthy
+    110, 115, 125, 112, 118, 109 # Tumour
+  )
+)
+
+# Inspect the data
+gene_data
+str(gene_data)
+```
+
+## Data Visualisation
+Now we have learnt how to create variables, vectors, matrices, and data frames, it is next pertient to be able to visualise that data. We will use a package called `ggplot2` to achieve this. We will use our dummy gene expression data as an example.
+
+Plots made in `ggplot2` are built in layers. In the base layer we may define the axes of the plot.
+
+This is achieved below, in this example we use a pipe `%>%`. The pipe takes the data on its left and sends it straight into the function on its right.
+
+```{r}
+#Load the package that contains the ggplot2 package and functions
+library(tidyverse)
+
+#Create the base layer
+
+gene_data %>% 
+  ggplot(aes(x=Condition, y = Expression))
+```
+
+Now lets add another and overlay a boxplot onto the plot
+
+```{r}
+#Create the base layer
+
+gene_data %>% 
+  ggplot(aes(x=Condition, y = Expression))+
+  geom_boxplot()
+```
+
+Now overlay the data points. We are going the "jitter" them in the x axis so they are easier to visualise
+
+```{r}
+#Create the base layer
+
+gene_data %>% 
+  ggplot(aes(x=Condition, y = Expression))+
+  geom_boxplot()+
+  geom_jitter(width=0.2) # width informs how far points are able to jitter
+```
+
+We could improve the theme of the plot. Firstly we could use a preset theme. It would also be good to change the axis titles to something more appropiate
+
+```{r}
+#Create the base layer
+
+gene_data %>% 
+  ggplot(aes(x=Condition, y = Expression))+
+  geom_boxplot()+
+  geom_jitter(width=0.2)+ # width informs how far points are able to jitter
+  theme_bw()+ #pre made theme
+  labs(x="Condition",y="Expression of Gene A (TPM)")
+```
+
+Make further custom edits to the theme to remove grid lines, increase font size, and change font colour to black.
+
+
+```{r}
+#Create the base layer
+
+gene_data %>% 
+  ggplot(aes(x=Condition, y = Expression))+
+  geom_boxplot()+
+  geom_jitter(width=0.2)+ # width informs how far points are able to jitter
+  theme_bw()+ #pre made theme
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.title = element_text(size=14, face="bold", colour="black"),
+        axis.text=element_text(size=12, colour="black"))+
+  labs(x="Condition",y="Expression of Gene A (TPM)")
+```
+
+# Workshop 2: Differential Expression Analysis with DESeq2 {.tabset}
+
+## Load Required Packages
+
+```{r}
+library(DESeq2)
+library(EnhancedVolcano)
+library(tidyverse)
+```
+
+## Import Data
+
+```{r}
+count_data <- read.table(
+  file = "data/GSE129482_laura_0417.counts.txt",
+  row.names = 1,
+  header = TRUE
+)
+
+meta_data <- read.csv("data/RNAseq_GSE129482_metadata.csv")
+
+head(count_data)
+head(meta_data)
+```
+
+## Data Preparation and Quality Checks
+
+```{r}
+count_data <- as.matrix(count_data)
+meta_data  <- as.matrix(meta_data)
+
+if (any(duplicated(row.names(count_data)))) {
+  print("Duplicates Present")
+} else {
+  print("No Duplicates Present")
+}
+
+nrow(meta_data) == ncol(count_data)
+```
+
+## Create DESeq2 Dataset
+
+```{r}
+dds <- DESeqDataSetFromMatrix(
+  countData = count_data,
+  colData   = meta_data,
+  design    = ~ Condition
+)
+```
+
+## Run DESeq2 Analysis
+
+```{r}
+dds <- DESeq(dds)
+res <- results(dds)
+```
+
+## Process Results
+
+```{r}
+res <- res[order(res$padj), ]
+res <- as.data.frame(res)
+res <- res[!(res$baseMean == 0), ]
+res <- res[!is.na(res$padj), ]
+res <- rownames_to_column(res, var = "gene")
+```
+
+## Volcano Plot
+
+```{r}
+#| fig-width: 7
+#| fig-height: 8
+EnhancedVolcano(
+  res,
+  lab = res$gene,
+  x = "log2FoldChange",
+  y = "padj",
+  gridlines.major = FALSE,
+  gridlines.minor = FALSE,
+  border = "full",
+  title = "Normal Lung vs NTCU-Induced SCC"
+)
+```
+
+## Challenge Task
+
+Can you use your `ggplot2` skills to create a custom visualization of the dataset?
+
+## Identify Upregulated Genes
+
+```{r}
+sig_up <- res %>%
+  filter(
+    padj < 0.05,
+    log2FoldChange >= 1
+  )
+
+upregulated_genes <- sig_up$gene
+```
+
+## Export Upregulated Gene List
+
+```{r}
+write.table(
+  upregulated_genes,
+  file = "data/upregulated_genes.txt",
+  quote = FALSE,
+  row.names = FALSE,
+  col.names = FALSE
+)
+```
+
+# Workshop 3: Gene Ontology Analysis Using Stringdb (browser)
+
+In the last workshop activity, we ran a differential gene expression analysis using `DEseq2` and extracted a `.txt` file which contained a list of genes that are signficantly upregulated (log2 FC >=1 and padj < 0.05) in the NTCU-Induced squamous cell carcinoma samples.
+
+In this workshop, we will use `StringDB` in the browser to perform a gene ontology (GO) analysis. GO analysis helps us identify which biological processes and molecular functions are enriched among the upregulated genes.
+
+## Navigate to Stringdb 
+
+Firstly navigate to the `Stringdb` website https://string-db.org/. Then select the `Browse` button as higlighted in the text below
+
+```{r echo = FALSE}
+library(magick)
+screenshot_1 <- image_read("images/screenshot_browse.png")
+screenshot_1
+
+```
+
+##Upload the upregulated genes text file
+
+Now upload the `upregulated_genes.txt` file and press `SEARCH`. Then select `CONTINUE TO ANALYSIS`
+
+```{r echo = FALSE}
+screenshot_2 <- image_read("images/screenshot_2.png")
+screenshot_2
+
+```
+
+Select Mus Musculus as the organism
+
+```{r echo = FALSE}
+screenshot_3 <- image_read("images/screenshot_3.png")
+screenshot_3
+
+```

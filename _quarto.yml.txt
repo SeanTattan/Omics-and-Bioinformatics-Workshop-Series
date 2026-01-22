@@ -1,0 +1,15 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "Omics and Bioinformatics Workshop Series"
+
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    theme: cosmo
+
+execute:
+  freeze: auto
