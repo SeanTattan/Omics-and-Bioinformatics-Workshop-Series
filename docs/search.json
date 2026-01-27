@@ -116,6 +116,13 @@
     "href": "index.html#navigate-to-stringdb",
     "title": "Omics and Bioinformatics Workshop Series",
     "section": "Navigate to Stringdb",
-    "text": "Navigate to Stringdb\nFirstly navigate to the Stringdb website https://string-db.org/. Then selectBrowse to begin a gene set analysis.\n\n\n\n\n\n\n\n\n\n##Upload the upregulated genes text file\nNow upload the upregulated_genes.txt file and press SEARCH. Then select CONTINUE TO ANALYSIS\n\n\n\n\n\n\n\n\n\nSelect Mus Musculus as the organism\n\n\n\n\n\n\n\n\n\nPress CONTINUE until you can see the results of the gene set analysis\n\n\n\n\n\n\n\n\n\nScroll down to view the graphical representations of enriched biological processes.\nExamine the most significantly enriched terms and consider:\n\nWhich biological pathways are upregulated in squamous cell carcinoma?\nHow do these pathways relate to the disease biology?\nFormulate a hypothesis about why these processes might be important in tumour progression."
+    "text": "Navigate to Stringdb\nFirstly navigate to the Stringdb website https://string-db.org/. Then selectBrowse to begin a gene set analysis."
+  },
+  {
+    "objectID": "index.html#upload-the-upregulated-genes-text-file",
+    "href": "index.html#upload-the-upregulated-genes-text-file",
+    "title": "Omics and Bioinformatics Workshop Series",
+    "section": "Upload the upregulated genes text file",
+    "text": "Upload the upregulated genes text file\nNow upload the upregulated_genes.txt file and press SEARCH. Then select CONTINUE TO ANALYSIS\n\n\n\n\n\n\n\n\n\nSelect Mus Musculus as the organism\n\n\n\n\n\n\n\n\n\nPress CONTINUE until you can see the results of the gene set analysis\n\n\n\n\n\n\n\n\n\nScroll down to view the graphical representations of enriched biological processes.\nExamine the most significantly enriched terms and consider:\n\nWhich biological pathways are upregulated in squamous cell carcinoma?\nHow do these pathways relate to the disease biology?\nFormulate a hypothesis about why these processes might be important in tumour progression."
   }
 ]

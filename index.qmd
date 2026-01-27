@@ -1,6 +1,6 @@
 ---
 title: "Omics and Bioinformatics Workshop Series"
-author: "Dr Sean Tattan, School of Chemistry, Pharmacy and Pharmacology https://research-portal.uea.ac.uk/en/persons/sean-tattan/"
+author: "Dr Sean Tattan, School of Chemistry, Pharmacy and Pharmacology"
 format:
   html:
     toc: true
@@ -226,13 +226,8 @@ head(meta_data)
 
 ```{r}
 count_data <- as.matrix(count_data)
-meta_data  <- as.matrix(meta_data)
 
-if (any(duplicated(row.names(count_data)))) {
-  print("Duplicates Present")
-} else {
-  print("No Duplicates Present")
-}
+meta_data  <- as.matrix(meta_data)
 
 nrow(meta_data) == ncol(count_data)
 ```
@@ -326,7 +321,7 @@ screenshot_1
 
 ```
 
-##Upload the upregulated genes text file
+## Upload the upregulated genes text file
 
 Now upload the `upregulated_genes.txt` file and press `SEARCH`. Then select `CONTINUE TO ANALYSIS`
 
